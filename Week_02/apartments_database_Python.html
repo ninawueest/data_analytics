@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>supermarkets_data_preparation</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>apartments_database_Python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7476,18 +7476,18 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3272230e">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=spectacular-oxford">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Importing-and-preparing-supermarkets-data">Importing and preparing supermarkets data<a class="anchor-link" href="#Importing-and-preparing-supermarkets-data">¶</a></h1>
+<h1 id="Writing-data-to-and-reading-data-from-a-Database-using-Python">Writing data to and reading data from a Database using Python<a class="anchor-link" href="#Writing-data-to-and-reading-data-from-a-Database-using-Python">¶</a></h1>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=abe67fc9">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=14d7fbf5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7497,7 +7497,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=cbff58c8">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6b7c9af0">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7507,18 +7507,69 @@ a.anchor-link {
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Libraries</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="c1"># Ignore warnings</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 
-<span class="c1"># Get current working directory</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Current working directory:'</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+<span class="c1"># Function to close a sqlite db-connection</span>
+<span class="k">def</span> <span class="nf">check_conn</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+     <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
-<span class="c1"># Show .json files in the current working directory</span>
-<span class="n">flist</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">'.'</span><span class="p">),</span> <span class="s1">'*.json'</span><span class="p">)</span>
+<span class="c1"># Get current working directory</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>/workspaces/data_analytics/Week_02
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0b880d4d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Create-sqlite-data-base">Create sqlite data base<a class="anchor-link" href="#Create-sqlite-data-base">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=240f7517">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create data base</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">'apartment_database.db'</span><span class="p">)</span> 
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="c1"># Show dbs in the directory</span>
+<span class="n">flist</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">'.'</span><span class="p">),</span> <span class="s1">'*.db'</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">flist</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
@@ -7533,25 +7584,25 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Current working directory: /workspaces/data_analytics/Week_02
-supermarkets.json
+<pre>apartment_database.db
+supermarket_database.db
 </pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2a7bff4a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=aff97772">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Importing-data">Importing data<a class="anchor-link" href="#Importing-data">¶</a></h2>
+<h2 id="Create-SQL-table-in-the-database">Create SQL-table in the database<a class="anchor-link" href="#Create-SQL-table-in-the-database">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=aa8f37dd">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a3d83cba">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7559,106 +7610,30 @@ supermarkets.json
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Read the data to a pandas data frame</span>
-<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="s1">'supermarkets.json'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
-<span class="n">df1</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''CREATE TABLE IF NOT EXISTS apartments_table (OrderId VARCHAR(50),</span>
+<span class="s1">                                                               Adress VARCHAR(200),</span>
+<span class="s1">                                                               Rooms DECIMAL(8,2),</span>
+<span class="s1">                                                               Area INT(8),</span>
+<span class="s1">                                                               Price DECIMAL(8,2))'''</span><span class="p">)</span>
+<span class="c1"># Confirm changes to the table</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>tags</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>node</td>
-<td>33126515</td>
-<td>47.155616</td>
-<td>9.037915</td>
-<td>{'brand': 'Spar', 'brand:wikidata': 'Q610492',...</td>
-</tr>
-<tr>
-<th>1</th>
-<td>node</td>
-<td>36726161</td>
-<td>47.226191</td>
-<td>8.980329</td>
-<td>{'addr:city': 'Uznach', 'addr:housenumber': '2...</td>
-</tr>
-<tr>
-<th>2</th>
-<td>node</td>
-<td>39768209</td>
-<td>47.225069</td>
-<td>8.969981</td>
-<td>{'addr:city': 'Uznach', 'addr:postcode': '8730...</td>
-</tr>
-<tr>
-<th>3</th>
-<td>node</td>
-<td>39947904</td>
-<td>47.376732</td>
-<td>8.542161</td>
-<td>{'addr:city': 'Zürich', 'addr:country': 'CH', ...</td>
-</tr>
-<tr>
-<th>4</th>
-<td>node</td>
-<td>48932835</td>
-<td>47.375020</td>
-<td>8.522895</td>
-<td>{'addr:city': 'Zürich', 'addr:housenumber': '7...</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b95e9f0e">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a87c8dee">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Count-number-of-rows-and-columns-in-the-data-frame">Count number of rows and columns in the data frame<a class="anchor-link" href="#Count-number-of-rows-and-columns-in-the-data-frame">¶</a></h2>
+<h2 id="Read-data-from-file-to-data-frame">Read data from file to data frame<a class="anchor-link" href="#Read-data-from-file-to-data-frame">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ec7391ad">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=34300bd6">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7666,287 +7641,10 @@ supermarkets.json
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Dimension (rows, columns)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Dimension:'</span><span class="p">,</span> <span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="c1"># Number of rows</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of rows:'</span><span class="p">,</span> <span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="c1"># Number of columns</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of columns:'</span><span class="p">,</span> <span class="n">df1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Dimension: (3392, 5)
-Number of rows: 3392
-Number of columns: 5
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e87e78e7">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Column-'tags'-is-a-pandas-Series-with-dictionaries--%3E-change-to-data-frame">Column 'tags' is a pandas Series with dictionaries -&gt; change to data frame<a class="anchor-link" href="#Column-'tags'-is-a-pandas-Series-with-dictionaries--%3E-change-to-data-frame">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b4aacf01">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Type of the first item of column tags</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-
-<span class="c1"># Content of the first item of column tags</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-<span class="c1"># Change to data frame</span>
-<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
-<span class="n">df2</span><span class="p">[[</span><span class="s1">'brand'</span><span class="p">,</span> <span class="s1">'shop'</span><span class="p">,</span> <span class="s1">'addr:city'</span><span class="p">,</span> <span class="s1">'addr:street'</span><span class="p">,</span> <span class="s1">'addr:housenumber'</span><span class="p">,</span> <span class="s1">'addr:postcode'</span><span class="p">]]</span>
-
-<span class="c1"># Rename selected columns</span>
-<span class="n">df2</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'addr:city'</span><span class="p">:</span> <span class="s1">'city'</span><span class="p">,</span>
-                          <span class="s1">'addr:street'</span><span class="p">:</span><span class="s1">'street'</span><span class="p">,</span>
-                          <span class="s1">'addr:housenumber'</span><span class="p">:</span> <span class="s1">'housenumber'</span><span class="p">,</span>
-                          <span class="s1">'addr:postcode'</span><span class="p">:</span> <span class="s1">'postcode'</span><span class="p">})</span>
-
-<span class="c1"># Show first records of data frame</span>
-<span class="n">df2</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>&lt;class 'pandas.core.series.Series'&gt;
-&lt;class 'dict'&gt;
-dict_keys(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening_hours', 'shop'])
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>brand</th>
-<th>brand:wikidata</th>
-<th>brand:wikipedia</th>
-<th>name</th>
-<th>opening_hours</th>
-<th>shop</th>
-<th>city</th>
-<th>housenumber</th>
-<th>postcode</th>
-<th>street</th>
-<th>...</th>
-<th>source:addr</th>
-<th>opening_date</th>
-<th>postid</th>
-<th>operator:website</th>
-<th>diet:local</th>
-<th>payment:account_cards</th>
-<th>diet:fish</th>
-<th>diet:mediterranean</th>
-<th>diet:organic</th>
-<th>diet:seafood</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>Spar</td>
-<td>Q610492</td>
-<td>en:SPAR (retailer)</td>
-<td>Spar</td>
-<td>Mo-Th 08:00-19:00; Fr 08:00-20:00; Sa 08:00-17:00</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>1</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>de:Migros</td>
-<td>Migros</td>
-<td>Mo-Th 08:00-19:00, Fr 08:00-20:00, Sa 07:30-17...</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>25</td>
-<td>8730</td>
-<td>Zürcherstrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>2</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>NaN</td>
-<td>Coop</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>NaN</td>
-<td>8730</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>3</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>de:Coop (Schweiz)</td>
-<td>Coop</td>
-<td>Mo-Sa 06:00-22:00</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>1</td>
-<td>8001</td>
-<td>Bahnhofbrücke</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>4</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>NaN</td>
-<td>Migros</td>
-<td>Mo-Sa 08:00-21:00; PH off</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>7</td>
-<td>8004</td>
-<td>Wengistrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-</tbody>
-</table>
-<p>5 rows × 233 columns</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e801ae61">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Merge-df1-and-df2">Merge df1 and df2<a class="anchor-link" href="#Merge-df1-and-df2">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=0a78ba35">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Merge df and df2</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df1</span><span class="p">[[</span><span class="s1">'type'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'lat'</span><span class="p">,</span> <span class="s1">'lon'</span><span class="p">]],</span> 
-              <span class="n">df2</span><span class="p">[[</span><span class="s1">'brand'</span><span class="p">,</span> <span class="s1">'shop'</span><span class="p">,</span> <span class="s1">'city'</span><span class="p">,</span> <span class="s1">'street'</span><span class="p">,</span> <span class="s1">'housenumber'</span><span class="p">,</span> <span class="s1">'postcode'</span><span class="p">]],</span>
-              <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-              <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'apartments_data_prepared.csv'</span><span class="p">,</span> 
+                  <span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">,</span> 
+                  <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)[[</span><span class="s1">'web-scraper-order'</span><span class="p">,</span> <span class="s1">'address_raw'</span><span class="p">,</span> <span class="s1">'rooms'</span><span class="p">,</span> <span class="s1">'area'</span><span class="p">,</span> <span class="s1">'price'</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7957,6 +7655,13 @@ dict_keys(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening_hours'
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(1008, 5)
+</pre>
+</div>
+</div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
@@ -7978,83 +7683,53 @@ dict_keys(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening_hours'
 <thead>
 <tr style="text-align: right;">
 <th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
+<th>web-scraper-order</th>
+<th>address_raw</th>
+<th>rooms</th>
+<th>area</th>
+<th>price</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th>0</th>
-<td>node</td>
-<td>33126515</td>
-<td>47.155616</td>
-<td>9.037915</td>
-<td>Spar</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998201-1</td>
+<td>Neuhusstrasse 6, 8630 Rüti ZH, ZH</td>
+<td>3.0</td>
+<td>49.0</td>
+<td>1441.0</td>
 </tr>
 <tr>
 <th>1</th>
-<td>node</td>
-<td>36726161</td>
-<td>47.226191</td>
-<td>8.980329</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>Zürcherstrasse</td>
-<td>25</td>
-<td>8730</td>
+<td>1693998201-2</td>
+<td>Zürcherstrasse 1, 8173 Neerach, ZH</td>
+<td>3.5</td>
+<td>65.0</td>
+<td>1850.0</td>
 </tr>
 <tr>
 <th>2</th>
-<td>node</td>
-<td>39768209</td>
-<td>47.225069</td>
-<td>8.969981</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Uznach</td>
+<td>1693998201-3</td>
+<td>Cramerstrasse 8-12, 8004 Zürich, ZH</td>
 <td>NaN</td>
 <td>NaN</td>
-<td>8730</td>
+<td>2686.0</td>
 </tr>
 <tr>
 <th>3</th>
-<td>node</td>
-<td>39947904</td>
-<td>47.376732</td>
-<td>8.542161</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Bahnhofbrücke</td>
-<td>1</td>
-<td>8001</td>
+<td>1693998201-4</td>
+<td>Cramerstrasse 8-12, 8004 Zürich, ZH</td>
+<td>2.0</td>
+<td>54.0</td>
+<td>4853.0</td>
 </tr>
 <tr>
 <th>4</th>
-<td>node</td>
-<td>48932835</td>
-<td>47.375020</td>
-<td>8.522895</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Wengistrasse</td>
-<td>7</td>
-<td>8004</td>
+<td>1693998201-5</td>
+<td>Rotachstrasse 33, 8003 Zürich, ZH</td>
+<td>2.0</td>
+<td>49.0</td>
+<td>4335.0</td>
 </tr>
 </tbody>
 </table>
@@ -8064,17 +7739,17 @@ dict_keys(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening_hours'
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=621b8ae9">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ef970dfe">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Count-and-identify-the-number-of-missing-values-(if-any)">Count and identify the number of missing values (if any)<a class="anchor-link" href="#Count-and-identify-the-number-of-missing-values-(if-any)">¶</a></h2>
+<h2 id="Write-data-to-the-SQL-table-in-data-base">Write data to the SQL-table in data base<a class="anchor-link" href="#Write-data-to-the-SQL-table-in-data-base">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=67773d99">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1c728ac7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8082,324 +7757,10 @@ dict_keys(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening_hours'
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Count missing values</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-
-<span class="c1"># Identify rows with missing values, e.g.:</span>
-<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'city'</span><span class="p">])]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>type              0
-id                0
-lat               0
-lon               0
-brand          1065
-shop              0
-city           1777
-street         1608
-housenumber    1680
-postcode       1709
-dtype: int64
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>0</th>
-<td>node</td>
-<td>33126515</td>
-<td>47.155616</td>
-<td>9.037915</td>
-<td>Spar</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>5</th>
-<td>node</td>
-<td>60271452</td>
-<td>47.406671</td>
-<td>9.305450</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>6</th>
-<td>node</td>
-<td>70656485</td>
-<td>47.491253</td>
-<td>8.733981</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>10</th>
-<td>node</td>
-<td>81321513</td>
-<td>47.532917</td>
-<td>9.066408</td>
-<td>Landi</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>13</th>
-<td>node</td>
-<td>95582038</td>
-<td>47.050385</td>
-<td>9.059214</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>...</th>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-</tr>
-<tr>
-<th>3384</th>
-<td>node</td>
-<td>11083317088</td>
-<td>46.862184</td>
-<td>9.531169</td>
-<td>Lidl</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>3386</th>
-<td>node</td>
-<td>11098091830</td>
-<td>46.205111</td>
-<td>6.130174</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>3387</th>
-<td>node</td>
-<td>11099817248</td>
-<td>46.928691</td>
-<td>7.561873</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>3388</th>
-<td>node</td>
-<td>11103235832</td>
-<td>46.166742</td>
-<td>8.771970</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>3391</th>
-<td>node</td>
-<td>11129298207</td>
-<td>47.537518</td>
-<td>7.608581</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-</tbody>
-</table>
-<p>1777 rows × 10 columns</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=240063a9">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Count-and-identify-duplicated-values-(if-any)">Count and identify duplicated values (if any)<a class="anchor-link" href="#Count-and-identify-duplicated-values-(if-any)">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5329c099">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Count duplicated values</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-
-<span class="c1"># Identify rows with duplicated values, e.g.:</span>
-<span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[[</span><span class="s1">'id'</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>0
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ace6d22c">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Get-data-types-of-all-variables">Get data types of all variables<a class="anchor-link" href="#Get-data-types-of-all-variables">¶</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=dd9244a5">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Get data types (note that in pandas, a string is referred to as 'object')</span>
-<span class="n">df</span><span class="o">.</span><span class="n">dtypes</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'apartments_table'</span><span class="p">,</span>
+          <span class="n">con</span> <span class="o">=</span> <span class="n">conn</span><span class="p">,</span>
+          <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+          <span class="n">if_exists</span> <span class="o">=</span> <span class="s1">'replace'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8412,33 +7773,23 @@ dtype: int64
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>type            object
-id               int64
-lat            float64
-lon            float64
-brand           object
-shop            object
-city            object
-street          object
-housenumber     object
-postcode        object
-dtype: object</pre>
+<pre>1008</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=165f8f9f">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=43c2ef9f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Save-data-to-file">Save data to file<a class="anchor-link" href="#Save-data-to-file">¶</a></h3>
+<h2 id="Query-the-SQL-table">Query the SQL-table<a class="anchor-link" href="#Query-the-SQL-table">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3c2773d3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=48dcc02c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8446,48 +7797,14 @@ dtype: object</pre>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'supermarkets_data_prepared.csv'</span><span class="p">,</span> 
-          <span class="n">sep</span><span class="o">=</span><span class="s2">","</span><span class="p">,</span> 
-          <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">,</span>
-          <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=45f66d89">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Additional-filters-on-supermarkets">Additional filters on supermarkets<a class="anchor-link" href="#Additional-filters-on-supermarkets">¶</a></h2>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=47c2f3bb">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3>Filter only Migros supermarkets in the city of Zürich</h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fa9cdae5">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Filter only Migros supermarkets in the city of Zürich.</span>
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">'brand'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Migros'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'city'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Zürich'</span><span class="p">)]</span>
-<span class="n">df_filtered</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Query the SQL-table</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''SELECT *</span>
+<span class="s1">               FROM apartments_table</span>
+<span class="s1">               WHERE rooms &gt;=1'''</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">(),</span> 
+                  <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'OrderId'</span><span class="p">,</span><span class="s1">'Address'</span><span class="p">,</span><span class="s1">'Rooms'</span><span class="p">,</span><span class="s1">'Area'</span><span class="p">,</span><span class="s1">'Price'</span><span class="p">])</span>    
+<span class="n">df</span>
 </pre></div>
 </div>
 </div>
@@ -8518,1621 +7835,122 @@ dtype: object</pre>
 <thead>
 <tr style="text-align: right;">
 <th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>4</th>
-<td>node</td>
-<td>48932835</td>
-<td>47.375020</td>
-<td>8.522895</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Wengistrasse</td>
-<td>7</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>11</th>
-<td>node</td>
-<td>83330862</td>
-<td>47.344749</td>
-<td>8.529981</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Etzelstrasse</td>
-<td>3</td>
-<td>8038</td>
-</tr>
-<tr>
-<th>16</th>
-<td>node</td>
-<td>119249170</td>
-<td>47.375255</td>
-<td>8.536107</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Löwenstrasse</td>
-<td>31-35</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>50</th>
-<td>node</td>
-<td>262400822</td>
-<td>47.364072</td>
-<td>8.530945</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Tessinerplatz</td>
-<td>10</td>
-<td>8002</td>
-</tr>
-<tr>
-<th>71</th>
-<td>node</td>
-<td>267346993</td>
-<td>47.385598</td>
-<td>8.531471</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Limmatstrasse</td>
-<td>152</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>82</th>
-<td>node</td>
-<td>270958272</td>
-<td>47.358367</td>
-<td>8.554074</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Seefeldstrasse</td>
-<td>111-113</td>
-<td>8008</td>
-</tr>
-<tr>
-<th>83</th>
-<td>node</td>
-<td>271028298</td>
-<td>47.365678</td>
-<td>8.548041</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Falkenstrasse</td>
-<td>19-21</td>
-<td>8008</td>
-</tr>
-<tr>
-<th>85</th>
-<td>node</td>
-<td>271029206</td>
-<td>47.364596</td>
-<td>8.553846</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Kreuzplatz</td>
-<td>20</td>
-<td>8032</td>
-</tr>
-<tr>
-<th>89</th>
-<td>node</td>
-<td>273942728</td>
-<td>47.357610</td>
-<td>8.571369</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Forchstrasse</td>
-<td>260</td>
-<td>8008</td>
-</tr>
-<tr>
-<th>192</th>
-<td>node</td>
-<td>310133197</td>
-<td>47.419522</td>
-<td>8.548286</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Schaffhauserstrasse</td>
-<td>470</td>
-<td>8052</td>
-</tr>
-<tr>
-<th>208</th>
-<td>node</td>
-<td>312838980</td>
-<td>47.379200</td>
-<td>8.508799</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Badenerstrasse</td>
-<td>376</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>224</th>
-<td>node</td>
-<td>321361643</td>
-<td>47.392553</td>
-<td>8.538428</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Schaffhauserstrasse</td>
-<td>75</td>
-<td>8057</td>
-</tr>
-<tr>
-<th>271</th>
-<td>node</td>
-<td>352860119</td>
-<td>47.370122</td>
-<td>8.520092</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Birmensdorferstrasse</td>
-<td>140</td>
-<td>8003</td>
-</tr>
-<tr>
-<th>422</th>
-<td>node</td>
-<td>451720086</td>
-<td>47.358060</td>
-<td>8.517301</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Giesshübelstrasse</td>
-<td>65</td>
-<td>8045</td>
-</tr>
-<tr>
-<th>424</th>
-<td>node</td>
-<td>452715384</td>
-<td>47.420420</td>
-<td>8.508217</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Jonas-Furrer-Strasse</td>
-<td>21</td>
-<td>8046</td>
-</tr>
-<tr>
-<th>433</th>
-<td>node</td>
-<td>457133149</td>
-<td>47.410571</td>
-<td>8.543095</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Hofwiesenstrasse</td>
-<td>350-354</td>
-<td>8050</td>
-</tr>
-<tr>
-<th>471</th>
-<td>node</td>
-<td>480274029</td>
-<td>47.393708</td>
-<td>8.529246</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Scheffelstrasse</td>
-<td>3</td>
-<td>8037</td>
-</tr>
-<tr>
-<th>614</th>
-<td>node</td>
-<td>639144592</td>
-<td>47.403796</td>
-<td>8.573042</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Winterthurerstrasse</td>
-<td>524</td>
-<td>8051</td>
-</tr>
-<tr>
-<th>876</th>
-<td>node</td>
-<td>995471959</td>
-<td>47.379385</td>
-<td>8.559468</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Toblerstrasse</td>
-<td>73</td>
-<td>8044</td>
-</tr>
-<tr>
-<th>1057</th>
-<td>node</td>
-<td>1409406549</td>
-<td>47.359209</td>
-<td>8.585617</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Witikonerstrasse</td>
-<td>293</td>
-<td>8053</td>
-</tr>
-<tr>
-<th>1210</th>
-<td>node</td>
-<td>1702309790</td>
-<td>47.370241</td>
-<td>8.508444</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Birmensdorferstrasse</td>
-<td>320</td>
-<td>8055</td>
-</tr>
-<tr>
-<th>1279</th>
-<td>node</td>
-<td>1835590613</td>
-<td>47.403852</td>
-<td>8.497455</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Regensdorferstrasse</td>
-<td>20</td>
-<td>8049</td>
-</tr>
-<tr>
-<th>1482</th>
-<td>node</td>
-<td>2330421254</td>
-<td>47.388283</td>
-<td>8.487567</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Altstetterstrasse</td>
-<td>145</td>
-<td>8048</td>
-</tr>
-<tr>
-<th>1882</th>
-<td>node</td>
-<td>3503429368</td>
-<td>47.390106</td>
-<td>8.508679</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Pfingstweidstrasse</td>
-<td>101</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>1943</th>
-<td>node</td>
-<td>3721143528</td>
-<td>47.335994</td>
-<td>8.519000</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Leimbachstrasse</td>
-<td>23</td>
-<td>8041</td>
-</tr>
-<tr>
-<th>2176</th>
-<td>node</td>
-<td>4424654362</td>
-<td>47.378290</td>
-<td>8.540417</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>2178</th>
-<td>node</td>
-<td>4424939155</td>
-<td>47.377032</td>
-<td>8.539410</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>2290</th>
-<td>node</td>
-<td>4827130190</td>
-<td>47.375203</td>
-<td>8.485718</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Albisriederstrasse</td>
-<td>363</td>
-<td>8047</td>
-</tr>
-<tr>
-<th>2292</th>
-<td>node</td>
-<td>4827131028</td>
-<td>47.385993</td>
-<td>8.548693</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Winterthurerstrasse</td>
-<td>2-4</td>
-<td>8006</td>
-</tr>
-<tr>
-<th>2671</th>
-<td>node</td>
-<td>6551162306</td>
-<td>47.378395</td>
-<td>8.535906</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>8001</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=42c49a0e">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3>Filter and count all Coop supermarkets in the cities of Zürich, Basel &amp; Bern</h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=eb89047d">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Filter and count all Coop supermarkets in the cities of Zürich, Basel &amp; Bern.</span>
-<span class="n">cities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Zürich'</span><span class="p">,</span> <span class="s1">'Basel'</span><span class="p">,</span> <span class="s1">'Bern'</span><span class="p">]</span>
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">'brand'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Coop'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'city'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cities</span><span class="p">))]</span>
-
-<span class="c1"># Count the number of rows that match the criteria</span>
-<span class="n">count</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Count of all Coop supermarkets in the cities Zürich, Basel, and Bern: "</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-<span class="n">df_filtered</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Count of all Coop supermarkets in the cities Zürich, Basel, and Bern:  52
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>3</th>
-<td>node</td>
-<td>39947904</td>
-<td>47.376732</td>
-<td>8.542161</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Bahnhofbrücke</td>
-<td>1</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>9</th>
-<td>node</td>
-<td>79977755</td>
-<td>47.340070</td>
-<td>8.530546</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Alte Kalchbühlstrasse</td>
-<td>15</td>
-<td>8038</td>
-</tr>
-<tr>
-<th>59</th>
-<td>node</td>
-<td>265776668</td>
-<td>47.376417</td>
-<td>8.559594</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Zürichbergstrasse</td>
-<td>75</td>
-<td>8044</td>
-</tr>
-<tr>
-<th>63</th>
-<td>node</td>
-<td>266630559</td>
-<td>47.377716</td>
-<td>8.511219</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Badenerstrasse</td>
-<td>333</td>
-<td>8003</td>
-</tr>
-<tr>
-<th>70</th>
-<td>node</td>
-<td>267345511</td>
-<td>47.385809</td>
-<td>8.516574</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Maagplatz</td>
-<td>1</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>72</th>
-<td>node</td>
-<td>267468996</td>
-<td>47.364872</td>
-<td>8.521006</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Uetlibergstrasse</td>
-<td>20</td>
-<td>8045</td>
-</tr>
-<tr>
-<th>75</th>
-<td>node</td>
-<td>268603429</td>
-<td>47.367360</td>
-<td>8.546174</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Theaterstrasse</td>
-<td>18</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>81</th>
-<td>node</td>
-<td>270692983</td>
-<td>47.357940</td>
-<td>8.554646</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Seefeldstrasse</td>
-<td>123</td>
-<td>8008</td>
-</tr>
-<tr>
-<th>84</th>
-<td>node</td>
-<td>271028686</td>
-<td>47.366773</td>
-<td>8.548079</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Stadelhoferstrasse</td>
-<td>10</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>86</th>
-<td>node</td>
-<td>271029581</td>
-<td>47.364300</td>
-<td>8.555129</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Forchstrasse</td>
-<td>4</td>
-<td>8008</td>
-</tr>
-<tr>
-<th>96</th>
-<td>node</td>
-<td>276363821</td>
-<td>47.418888</td>
-<td>8.505699</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Wehntalerstrasse</td>
-<td>549</td>
-<td>8046</td>
-</tr>
-<tr>
-<th>121</th>
-<td>node</td>
-<td>283103824</td>
-<td>47.393648</td>
-<td>8.529543</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Scheffelstrasse</td>
-<td>12</td>
-<td>8037</td>
-</tr>
-<tr>
-<th>122</th>
-<td>node</td>
-<td>283126967</td>
-<td>47.392539</td>
-<td>8.524557</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Röschibachstrasse</td>
-<td>22</td>
-<td>8037</td>
-</tr>
-<tr>
-<th>209</th>
-<td>node</td>
-<td>313026968</td>
-<td>47.375801</td>
-<td>8.517445</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Badenerstrasse</td>
-<td>244</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>225</th>
-<td>node</td>
-<td>321361788</td>
-<td>47.395725</td>
-<td>8.540471</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Milchbuckstrasse</td>
-<td>1-5</td>
-<td>8057</td>
-</tr>
-<tr>
-<th>446</th>
-<td>node</td>
-<td>470217716</td>
-<td>47.384789</td>
-<td>8.527125</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Röntgenstrasse</td>
-<td>48</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>496</th>
-<td>node</td>
-<td>514589840</td>
-<td>46.959297</td>
-<td>7.455153</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Bern</td>
-<td>Stauffacherstrasse</td>
-<td>2</td>
-<td>3014</td>
-</tr>
-<tr>
-<th>507</th>
-<td>node</td>
-<td>534632457</td>
-<td>46.937455</td>
-<td>7.476019</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Bern</td>
-<td>Weltpoststrasse</td>
-<td>20</td>
-<td>3015</td>
-</tr>
-<tr>
-<th>579</th>
-<td>node</td>
-<td>614828024</td>
-<td>47.403421</td>
-<td>8.589360</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Hirzenbachstrasse</td>
-<td>40</td>
-<td>8051</td>
-</tr>
-<tr>
-<th>623</th>
-<td>node</td>
-<td>651273252</td>
-<td>47.373288</td>
-<td>8.530562</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Badenerstrasse</td>
-<td>15</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>630</th>
-<td>node</td>
-<td>659862626</td>
-<td>47.375896</td>
-<td>8.487025</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Albisriederstrasse</td>
-<td>334</td>
-<td>8047</td>
-</tr>
-<tr>
-<th>686</th>
-<td>node</td>
-<td>707688653</td>
-<td>47.569095</td>
-<td>7.579643</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Elsässerstrasse</td>
-<td>36</td>
-<td>4056</td>
-</tr>
-<tr>
-<th>719</th>
-<td>node</td>
-<td>766705800</td>
-<td>47.413421</td>
-<td>8.540576</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Sophie-Taeuber-Strasse</td>
-<td>4</td>
-<td>8050</td>
-</tr>
-<tr>
-<th>892</th>
-<td>node</td>
-<td>1027136881</td>
-<td>47.425628</td>
-<td>8.496976</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Mühlackerstrasse</td>
-<td>199</td>
-<td>8046</td>
-</tr>
-<tr>
-<th>1013</th>
-<td>node</td>
-<td>1322305936</td>
-<td>47.545220</td>
-<td>7.588710</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Güterstrasse</td>
-<td>125</td>
-<td>4053</td>
-</tr>
-<tr>
-<th>1113</th>
-<td>node</td>
-<td>1513116290</td>
-<td>47.569082</td>
-<td>7.590574</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Klybeckstrasse</td>
-<td>142</td>
-<td>4057</td>
-</tr>
-<tr>
-<th>1145</th>
-<td>node</td>
-<td>1598176926</td>
-<td>47.543122</td>
-<td>7.593269</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Güterstrasse</td>
-<td>190</td>
-<td>4053</td>
-</tr>
-<tr>
-<th>1148</th>
-<td>node</td>
-<td>1598954903</td>
-<td>47.555210</td>
-<td>7.613846</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Farnsburgerstrasse</td>
-<td>37</td>
-<td>4052</td>
-</tr>
-<tr>
-<th>1240</th>
-<td>node</td>
-<td>1756956245</td>
-<td>47.370252</td>
-<td>8.537156</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Bärengasse</td>
-<td>16</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>1314</th>
-<td>node</td>
-<td>1925758931</td>
-<td>47.370793</td>
-<td>8.515856</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Birmensdorferstrasse</td>
-<td>200</td>
-<td>8003</td>
-</tr>
-<tr>
-<th>1453</th>
-<td>node</td>
-<td>2264702137</td>
-<td>47.387410</td>
-<td>8.488921</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Badenerstrasse</td>
-<td>650</td>
-<td>8048</td>
-</tr>
-<tr>
-<th>1478</th>
-<td>node</td>
-<td>2323174782</td>
-<td>47.377731</td>
-<td>8.534719</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Europaallee</td>
-<td>5</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>1617</th>
-<td>node</td>
-<td>2663868342</td>
-<td>47.570592</td>
-<td>7.573368</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Vogesenplatz</td>
-<td>10</td>
-<td>4056</td>
-</tr>
-<tr>
-<th>1722</th>
-<td>node</td>
-<td>2984223833</td>
-<td>47.386247</td>
-<td>8.499478</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Baslerstrasse</td>
-<td>50</td>
-<td>8048</td>
-</tr>
-<tr>
-<th>1830</th>
-<td>node</td>
-<td>3339748067</td>
-<td>46.943501</td>
-<td>7.406031</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Bern</td>
-<td>Europaplatz</td>
-<td>1</td>
-<td>3008</td>
-</tr>
-<tr>
-<th>1918</th>
-<td>node</td>
-<td>3653968759</td>
-<td>47.391114</td>
-<td>8.508187</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Pfingstweidstrasse</td>
-<td>106</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>2035</th>
-<td>node</td>
-<td>4039021088</td>
-<td>46.948998</td>
-<td>7.437534</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Bern</td>
-<td>Bahnhofplatz</td>
-<td>10</td>
-<td>3011</td>
-</tr>
-<tr>
-<th>2042</th>
-<td>node</td>
-<td>4069816589</td>
-<td>46.945398</td>
-<td>7.426830</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Bern</td>
-<td>Brunnmattstrasse</td>
-<td>20</td>
-<td>3007</td>
-</tr>
-<tr>
-<th>2122</th>
-<td>node</td>
-<td>4328291097</td>
-<td>47.347186</td>
-<td>8.533072</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Seestrasse</td>
-<td>339</td>
-<td>8038</td>
-</tr>
-<tr>
-<th>2132</th>
-<td>node</td>
-<td>4342407034</td>
-<td>47.565114</td>
-<td>7.617822</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Bäumlihofstrasse</td>
-<td>132/134</td>
-<td>4058</td>
-</tr>
-<tr>
-<th>2177</th>
-<td>node</td>
-<td>4424679510</td>
-<td>47.377825</td>
-<td>8.538369</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>2185</th>
-<td>node</td>
-<td>4437700046</td>
-<td>47.555654</td>
-<td>7.590741</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Freie Strasse</td>
-<td>75</td>
-<td>4001</td>
-</tr>
-<tr>
-<th>2194</th>
-<td>node</td>
-<td>4466482789</td>
-<td>47.380692</td>
-<td>8.534890</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Zollstrasse</td>
-<td>42</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>2304</th>
-<td>node</td>
-<td>4848816876</td>
-<td>47.372928</td>
-<td>8.537713</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Bahnhofstrasse</td>
-<td>57</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>2319</th>
-<td>node</td>
-<td>4896104281</td>
-<td>47.357474</td>
-<td>8.523064</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Kalanderplatz</td>
-<td>1</td>
-<td>8045</td>
-</tr>
-<tr>
-<th>2320</th>
-<td>node</td>
-<td>4896104282</td>
-<td>47.389834</td>
-<td>8.471856</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Am Suteracher</td>
-<td>14</td>
-<td>8048</td>
-</tr>
-<tr>
-<th>2321</th>
-<td>node</td>
-<td>4896104283</td>
-<td>47.410477</td>
-<td>8.546741</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Wallisellenstrasse</td>
-<td>1</td>
-<td>8050</td>
-</tr>
-<tr>
-<th>2563</th>
-<td>node</td>
-<td>6011935004</td>
-<td>47.412872</td>
-<td>8.547012</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Andreasstrasse</td>
-<td>5</td>
-<td>8050</td>
-</tr>
-<tr>
-<th>2928</th>
-<td>node</td>
-<td>8098492384</td>
-<td>47.561065</td>
-<td>7.591392</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Greifengasse</td>
-<td>3</td>
-<td>4058</td>
-</tr>
-<tr>
-<th>2929</th>
-<td>node</td>
-<td>8098492385</td>
-<td>47.576962</td>
-<td>7.591138</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Basel</td>
-<td>Inselstrasse</td>
-<td>76</td>
-<td>4057</td>
-</tr>
-<tr>
-<th>3007</th>
-<td>node</td>
-<td>8541239873</td>
-<td>47.387455</td>
-<td>8.517340</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Maschinenstrasse</td>
-<td>10</td>
-<td>8005</td>
-</tr>
-<tr>
-<th>3338</th>
-<td>node</td>
-<td>10711459945</td>
-<td>47.369962</td>
-<td>8.509175</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Birmensdorferstrasse</td>
-<td>310</td>
-<td>8055</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=69e36d15">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3>Filter supermarkets with available brand, city, house number and postcode</h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=50c38a4f">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Filter supermarkets with available brand, city, house number and postcode.</span>
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">'brand'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'city'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'housenumber'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'postcode'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())]</span>
-<span class="n">df_filtered</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>type</th>
-<th>id</th>
-<th>lat</th>
-<th>lon</th>
-<th>brand</th>
-<th>shop</th>
-<th>city</th>
-<th>street</th>
-<th>housenumber</th>
-<th>postcode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>1</th>
-<td>node</td>
-<td>36726161</td>
-<td>47.226191</td>
-<td>8.980329</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>Zürcherstrasse</td>
-<td>25</td>
-<td>8730</td>
-</tr>
-<tr>
-<th>3</th>
-<td>node</td>
-<td>39947904</td>
-<td>47.376732</td>
-<td>8.542161</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Bahnhofbrücke</td>
-<td>1</td>
-<td>8001</td>
-</tr>
-<tr>
-<th>4</th>
-<td>node</td>
-<td>48932835</td>
-<td>47.375020</td>
-<td>8.522895</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Wengistrasse</td>
-<td>7</td>
-<td>8004</td>
-</tr>
-<tr>
-<th>7</th>
-<td>node</td>
-<td>70656488</td>
-<td>47.491874</td>
-<td>8.706448</td>
-<td>Migros</td>
-<td>supermarket</td>
-<td>Winterthur</td>
-<td>Zürcherstrasse</td>
-<td>102</td>
-<td>8406</td>
-</tr>
-<tr>
-<th>8</th>
-<td>node</td>
-<td>75749133</td>
-<td>47.340967</td>
-<td>8.530601</td>
-<td>ALDI</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Albisstrasse</td>
-<td>81</td>
-<td>8038</td>
-</tr>
-<tr>
-<th>...</th>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-</tr>
-<tr>
-<th>3350</th>
-<td>node</td>
-<td>10814018169</td>
-<td>47.353857</td>
-<td>8.436716</td>
-<td>Coop</td>
-<td>supermarket</td>
-<td>Birmensdorf (ZH)</td>
-<td>Zürcherstrasse</td>
-<td>9</td>
-<td>8903</td>
-</tr>
-<tr>
-<th>3362</th>
-<td>node</td>
-<td>10982669725</td>
-<td>47.349782</td>
-<td>8.258690</td>
-<td>ALDI</td>
-<td>supermarket</td>
-<td>Villmergen</td>
-<td>Grenzweg</td>
-<td>3</td>
-<td>5612</td>
-</tr>
-<tr>
-<th>3370</th>
-<td>node</td>
-<td>11025130806</td>
-<td>47.059301</td>
-<td>7.620697</td>
-<td>Denner</td>
-<td>supermarket</td>
-<td>Burgdorf</td>
-<td>Lyssachstrasse</td>
-<td>27</td>
-<td>3400</td>
-</tr>
-<tr>
-<th>3378</th>
-<td>node</td>
-<td>11049758254</td>
-<td>47.338327</td>
-<td>8.520261</td>
-<td>Spar</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>Spinnereiplatz</td>
-<td>4</td>
-<td>8041</td>
-</tr>
-<tr>
-<th>3385</th>
-<td>node</td>
-<td>11096932868</td>
-<td>46.309025</td>
-<td>7.969107</td>
-<td>Denner</td>
-<td>supermarket</td>
-<td>Brig-Glis</td>
-<td>Kantonsstrasse</td>
-<td>58</td>
-<td>3902</td>
-</tr>
-</tbody>
-</table>
-<p>1148 rows × 10 columns</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=304efbe6">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3>Include opening hours as additional variable in the data frame</h3>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b50974cd">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Include opening hours as additional variable in the data frame.</span>
-<span class="c1"># Change to data frame</span>
-<span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">df1</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
-<span class="n">df3</span><span class="p">[[</span><span class="s1">'brand'</span><span class="p">,</span> <span class="s1">'shop'</span><span class="p">,</span> <span class="s1">'opening_hours'</span><span class="p">,</span> <span class="s1">'addr:city'</span><span class="p">,</span> <span class="s1">'addr:street'</span><span class="p">,</span> <span class="s1">'addr:housenumber'</span><span class="p">,</span> <span class="s1">'addr:postcode'</span><span class="p">]]</span>
-
-<span class="c1"># Rename selected columns</span>
-<span class="n">df3</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'opening_hours'</span><span class="p">:</span> <span class="s1">'opening hours'</span><span class="p">,</span>
-                          <span class="s1">'addr:city'</span><span class="p">:</span> <span class="s1">'city'</span><span class="p">,</span>
-                          <span class="s1">'addr:street'</span><span class="p">:</span><span class="s1">'street'</span><span class="p">,</span>
-                          <span class="s1">'addr:housenumber'</span><span class="p">:</span> <span class="s1">'housenumber'</span><span class="p">,</span>
-                          <span class="s1">'addr:postcode'</span><span class="p">:</span> <span class="s1">'postcode'</span><span class="p">})</span>
-
-<span class="c1"># Show first records of data frame</span>
-<span class="n">df3</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="c1"># NOTE: Ich wollte überflüssige Spalten entfernen, jedoch wusste ich nie wie ohne dass ich Fehler erhalte :(</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>brand</th>
-<th>brand:wikidata</th>
-<th>brand:wikipedia</th>
-<th>name</th>
-<th>opening hours</th>
-<th>shop</th>
-<th>city</th>
-<th>housenumber</th>
-<th>postcode</th>
-<th>street</th>
-<th>...</th>
-<th>source:addr</th>
-<th>opening_date</th>
-<th>postid</th>
-<th>operator:website</th>
-<th>diet:local</th>
-<th>payment:account_cards</th>
-<th>diet:fish</th>
-<th>diet:mediterranean</th>
-<th>diet:organic</th>
-<th>diet:seafood</th>
+<th>OrderId</th>
+<th>Address</th>
+<th>Rooms</th>
+<th>Area</th>
+<th>Price</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th>0</th>
-<td>Spar</td>
-<td>Q610492</td>
-<td>en:SPAR (retailer)</td>
-<td>Spar</td>
-<td>Mo-Th 08:00-19:00; Fr 08:00-20:00; Sa 08:00-17:00</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998201-1</td>
+<td>Neuhusstrasse 6, 8630 Rüti ZH, ZH</td>
+<td>3.0</td>
+<td>49.0</td>
+<td>1441.0</td>
 </tr>
 <tr>
 <th>1</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>de:Migros</td>
-<td>Migros</td>
-<td>Mo-Th 08:00-19:00, Fr 08:00-20:00, Sa 07:30-17...</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>25</td>
-<td>8730</td>
-<td>Zürcherstrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998201-2</td>
+<td>Zürcherstrasse 1, 8173 Neerach, ZH</td>
+<td>3.5</td>
+<td>65.0</td>
+<td>1850.0</td>
 </tr>
 <tr>
 <th>2</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>NaN</td>
-<td>Coop</td>
-<td>NaN</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>NaN</td>
-<td>8730</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998201-4</td>
+<td>Cramerstrasse 8-12, 8004 Zürich, ZH</td>
+<td>2.0</td>
+<td>54.0</td>
+<td>4853.0</td>
 </tr>
 <tr>
 <th>3</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>de:Coop (Schweiz)</td>
-<td>Coop</td>
-<td>Mo-Sa 06:00-22:00</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>1</td>
-<td>8001</td>
-<td>Bahnhofbrücke</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998201-5</td>
+<td>Rotachstrasse 33, 8003 Zürich, ZH</td>
+<td>2.0</td>
+<td>49.0</td>
+<td>4335.0</td>
 </tr>
 <tr>
 <th>4</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>NaN</td>
-<td>Migros</td>
-<td>Mo-Sa 08:00-21:00; PH off</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>7</td>
-<td>8004</td>
-<td>Wengistrasse</td>
+<td>1693998201-16</td>
+<td>Wolframplatz 1, 8045 Zürich, ZH</td>
+<td>2.0</td>
+<td>32.0</td>
+<td>3515.0</td>
+</tr>
+<tr>
+<th>...</th>
 <td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>958</th>
+<td>1693998381-1004</td>
+<td>Hölderlinstrasse 12, 8032 Zürich, ZH</td>
+<td>3.5</td>
+<td>82.0</td>
+<td>2830.0</td>
+</tr>
+<tr>
+<th>959</th>
+<td>1693998381-1005</td>
+<td>Hegifeldstrasse 70, 8404 Reutlingen (Winterthu...</td>
+<td>4.0</td>
+<td>73.0</td>
+<td>1713.0</td>
+</tr>
+<tr>
+<th>960</th>
+<td>1693998381-1006</td>
+<td>Holzmoosrütisteig 2b, 8820 Wädenswil, ZH</td>
+<td>4.5</td>
+<td>110.0</td>
+<td>3500.0</td>
+</tr>
+<tr>
+<th>961</th>
+<td>1693998381-1007</td>
+<td>Vogelbuckstrasse 25, 8307 Effretikon, ZH</td>
+<td>3.0</td>
+<td>68.0</td>
+<td>1650.0</td>
+</tr>
+<tr>
+<th>962</th>
+<td>1693998381-1008</td>
+<td>Maneggstrasse 83, 8041 Zürich, ZH</td>
+<td>4.5</td>
+<td>114.0</td>
+<td>3262.0</td>
 </tr>
 </tbody>
 </table>
-<p>5 rows × 233 columns</p>
+<p>963 rows × 5 columns</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=316c76bc">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0cc2274f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3>Filter supermarkets with available opening hours</h3>
+<h2 id="Plot-histogramm-of-rental-prices">Plot histogramm of rental prices<a class="anchor-link" href="#Plot-histogramm-of-rental-prices">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=87e05e27">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=60146b13">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10140,10 +7958,14 @@ dtype: object</pre>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Filter supermarkets with available opening hours.</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df3</span><span class="p">[</span><span class="s1">'opening hours'</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">())]</span>
-<span class="n">df_filtered</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">Price</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                   <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> 
+                   <span class="n">rwidth</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="s1">'#607c8e'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Apartment price'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Price'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Frequency'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -10155,17 +7977,61 @@ dtype: object</pre>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index(['brand', 'brand:wikidata', 'brand:wikipedia', 'name', 'opening hours',
-       'shop', 'city', 'housenumber', 'postcode', 'street',
-       ...
-       'source:addr', 'opening_date', 'postid', 'operator:website',
-       'diet:local', 'payment:account_cards', 'diet:fish',
-       'diet:mediterranean', 'diet:organic', 'diet:seafood'],
-      dtype='object', length=233)
-</pre>
+<div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
+<img alt="No description has been provided for this image" class="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAj4AAAHHCAYAAAC/R1LgAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8pXeV/AAAACXBIWXMAAA9hAAAPYQGoP6dpAAA34UlEQVR4nO3dd3hUZf7+8XuSIYUSQktCpDdBQaQGFtAVsoSyKsVCRAXkEmUJUhZw+e1KEVcQFbAgrLsaLCAL3wVkWSTGACIrhIAUKUtXBBKKIYQiafP8/mAz65iIMJxMynm/rmsumXOeeeZzPjNJbk+ZcRhjjAAAAGzAr7gLAAAA8BWCDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwCUQPXq1dPgwYOLuwygzCH4ADbw1ltvyeFwKCoqqrhLkSStXr1aU6ZMKe4yrsvly5c1ZcoUrV+/vrhLAWABB9/VBZR9nTp10smTJ/XNN9/o4MGDatSoUbHWExcXp7lz56o0/Po5e/asatSoocmTJ/s0rGVlZcnPz0/lypXz2XMCdsAeH6CMO3r0qL788kvNmjVLNWrU0MKFC4utlkuXLhXbc5cGxhj98MMPkqTAwEBCD1AECD5AGbdw4UJVqVJFvXv31gMPPFBo8Pnmm2/kcDj0yiuvaPbs2apbt66Cg4N19913a/fu3R5jd+3apcGDB6tBgwYKCgpSRESEnnjiCX3//fce46ZMmSKHw6G9e/fqkUceUZUqVdS5c2cNHjxYc+fOlSQ5HA737ad1zJ07Vw0aNFD58uXVvXt3fffddzLGaNq0aapVq5aCg4N1//33Kz09vcD2fPLJJ+rSpYsqVKigSpUqqXfv3tqzZ4/HmMGDB6tixYo6ceKE+vTpo4oVK6pGjRoaN26c8vLy3PXUqFFDkjR16lR3rdfa87NgwQI5HA5t2LBBTz31lKpVq6aQkBA9/vjjOnfunMfYevXq6be//a0SEhLUtm1bBQcH6y9/+Yt73U/P8cnIyNCYMWNUr149BQYGqlatWnr88cd19uxZ95isrCxNnjxZjRo1UmBgoGrXrq0JEyYoKyvrZ2sG7MRZ3AUAKFoLFy5Uv379FBAQoNjYWM2bN08pKSlq165dgbHvv/++Lly4oBEjRujKlSt67bXX1LVrV3399dcKDw+XJCUmJurIkSMaMmSIIiIitGfPHr399tvas2ePNm/e7A4x+R588EE1btxYL774oowxatWqlU6ePKnExER98MEHP1tzdna2Ro4cqfT0dM2cOVMPPfSQunbtqvXr1+vZZ5/VoUOH9MYbb2jcuHF699133Y/94IMPNGjQIMXExOill17S5cuXNW/ePHXu3Fnbt29XvXr13GPz8vIUExOjqKgovfLKK/rss8/06quvqmHDhho+fLhq1KihefPmafjw4erbt6/69esnSbrjjjt+se9xcXEKDQ3VlClTtH//fs2bN0/ffvut1q9f79Gj/fv3KzY2Vk899ZSefPJJ3XrrrYXOd/HiRXXp0kX79u3TE088odatW+vs2bNauXKljh8/rurVq8vlcum+++7Txo0bNWzYMDVr1kxff/21Zs+erQMHDmjFihW/WDdQ5hkAZdbWrVuNJJOYmGiMMcblcplatWqZUaNGeYw7evSokWSCg4PN8ePH3cuTk5ONJDNmzBj3ssuXLxd4no8++shIMhs2bHAvmzx5spFkYmNjC4wfMWKEKezXT34dNWrUMBkZGe7lEydONJJMy5YtTU5Ojnt5bGysCQgIMFeuXDHGGHPhwgUTGhpqnnzySY9509LSTOXKlT2WDxo0yEgyzz//vMfYVq1amTZt2rjvnzlzxkgykydPLlBvYeLj440k06ZNG5Odne1ePnPmTCPJfPzxx+5ldevWNZLMmjVrCsxTt25dM2jQIPf9SZMmGUlm2bJlBca6XC5jjDEffPCB8fPzM1988YXH+vnz5xtJ5t///vd1bQNQlnGoCyjDFi5cqPDwcN1zzz2Srh5aevjhh7V48WL34Zwf69Onj2655Rb3/fbt2ysqKkqrV692LwsODnb/+8qVKzp79qw6dOggSfrqq68KzPn000/fcN0PPvigKleu7L6ffzXao48+KqfT6bE8OztbJ06ckHR1b1RGRoZiY2N19uxZ983f319RUVFat27dL9bXpUsXHTly5IZr/qlhw4Z5nKMzfPhwOZ1Oj15KUv369RUTE/OL8/3jH/9Qy5Yt1bdv3wLr8vcgLV26VM2aNVPTpk09tr9r166SVOj2A3bDoS6gjMrLy9PixYt1zz336OjRo+7lUVFRevXVV5WUlKTu3bt7PKZx48YF5mnSpImWLFnivp+enq6pU6dq8eLFOn36tMfY8+fP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y6FTyrMw+QyOfUBS0dScP3dpw/vad+i179Br37Ky3/lHbG5EqXqFGzRooOrVq+vQoUPq1q2bIiIidPr0aY8xubm5Sk9P/9nzgqSr5w0FBgYWWO50Oi1705v//gH29/fnB+lH8lwW7pL5L39/f0mSyxhL589/3Yqi5tL6nuB97Tv02nfotW9Z2W9vHl+q9ukdP35c33//vWrWrClJ6tixozIyMrRt2zb3mLVr18rlcikqKqq4ygQAACVUsUbbixcv6tChQ+77R48e1Y4dO1S1alVVrVpVU6dOVf/+/RUREaHDhw9rwoQJatSokWJiYiRJzZo1U48ePfTkk09q/vz5ysnJUVxcnAYMGMAVXQAAoIBi3eOzdetWtWrVSq1atZIkjR07Vq1atdKkSZPk7++vXbt26b777lOTJk00dOhQtWnTRl988YXHYaqFCxeqadOm6tatm3r16qXOnTvr7bffLq5NAgAAJVix7vH59a9/7T7WV5iEhIRfnKNq1apatGiRlWUBAIAyqlSd4wMAAHAzCD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2CD4AAMA2vAo+R44csboOAACAIudV8GnUqJHuueceffjhh7py5YrVNQEAABQJr4LPV199pTvuuENjx45VRESEnnrqKW3ZssXq2gAAACzlVfC588479dprr+nkyZN69913lZqaqs6dO6t58+aaNWuWzpw5Y3WdAAAAN+2mTm52Op3q16+fli5dqpdeekmHDh3SuHHjVLt2bT3++ONKTU21qk4AAICbdlPBZ+vWrfrd736nmjVratasWRo3bpwOHz6sxMREnTx5Uvfff79VdQIAANw0pzcPmjVrluLj47V//3716tVL77//vnr16iU/v6s5qn79+lqwYIHq1atnZa0AAAA3xavgM2/ePD3xxBMaPHiwatasWeiYsLAwvfPOOzdVHAAAgJW8Cj4HDx78xTEBAQEaNGiQN9MDAAAUCa/O8YmPj9fSpUsLLF+6dKnee++9my4KAACgKHgVfKZPn67q1asXWB4WFqYXX3zxposCAAAoCl4Fn2PHjql+/foFltetW1fHjh276aIAAACKglfBJywsTLt27SqwfOfOnapWrdpNFwUAAFAUvAo+sbGxeuaZZ7Ru3Trl5eUpLy9Pa9eu1ahRozRgwACrawQAALCEV1d1TZs2Td988426desmp/PqFC6XS48//jjn+AAAgBLLq+ATEBCgv//975o2bZp27typ4OBgtWjRQnXr1rW6PgAAAMt4FXzyNWnSRE2aNLGqFgAAgCLlVfDJy8vTggULlJSUpNOnT8vlcnmsX7t2rSXFAQAAWMmr4DNq1CgtWLBAvXv3VvPmzeVwOKyuCwAAwHJeBZ/FixdryZIl6tWrl9X1AAAAFBmvLmcPCAhQo0aNrK4FAACgSHkVfH7/+9/rtddekzHG6noAAACKjFeHujZu3Kh169bpk08+0e23365y5cp5rF+2bJklxQEAAFjJq+ATGhqqvn37Wl0LAABAkfIq+MTHx1tdBwAAQJHz6hwfScrNzdVnn32mv/zlL7pw4YIk6eTJk7p48aJlxQEAAFjJqz0+3377rXr06KFjx44pKytLv/nNb1SpUiW99NJLysrK0vz5862uEwAA4KZ5tcdn1KhRatu2rc6dO6fg4GD38r59+yopKcmy4gAAAKzk1R6fL774Ql9++aUCAgI8lterV08nTpywpDAAAACrebXHx+VyKS8vr8Dy48ePq1KlSjddFAAAQFHwKvh0795dc+bMcd93OBy6ePGiJk+ezNdYAACAEsurQ12vvvqqYmJidNttt+nKlSt65JFHdPDgQVWvXl0fffSR1TUCAABYwqvgU6tWLe3cuVOLFy/Wrl27dPHiRQ0dOlQDBw70ONkZAACgJPEq+EiS0+nUo48+amUtAAAARcqr4PP+++9fc/3jjz/uVTEAAABFyavgM2rUKI/7OTk5unz5sgICAlS+fHmCDwAAKJG8uqrr3LlzHreLFy9q//796ty5Myc3AwCAEsvr7+r6qcaNG2vGjBkF9gYBAACUFJYFH+nqCc8nT560ckoAAADLeHWOz8qVKz3uG2OUmpqqN998U506dbKkMAAAAKt5FXz69Onjcd/hcKhGjRrq2rWrXn31VSvqAgAAsJxXwcflclldBwAAQJGz9BwfAACAksyrPT5jx4697rGzZs3y5ikAAAAs51Xw2b59u7Zv366cnBzdeuutkqQDBw7I399frVu3do9zOBzWVAkAAGABr4LPvffeq0qVKum9995TlSpVJF39UMMhQ4aoS5cu+v3vf29pkQAAAFbw6hyfV199VdOnT3eHHkmqUqWKXnjhBa7qAgAAJZZXwSczM1NnzpwpsPzMmTO6cOHCTRcFAABQFLwKPn379tWQIUO0bNkyHT9+XMePH9c//vEPDR06VP369bO6RgAAAEt4dY7P/PnzNW7cOD3yyCPKycm5OpHTqaFDh+rll1+2tEAAAACreBV8ypcvr7feeksvv/yyDh8+LElq2LChKlSoYGlxAAAAVrqpDzBMTU1VamqqGjdurAoVKsgYY1VdAAAAlvMq+Hz//ffq1q2bmjRpol69eik1NVWSNHToUC5lBwAAJZZXwWfMmDEqV66cjh07pvLly7uXP/zww1qzZo1lxQEAAFjJq3N8Pv30UyUkJKhWrVoeyxs3bqxvv/3WksIAAACs5tUen0uXLnns6cmXnp6uwMDAmy4KAACgKHgVfLp06aL333/ffd/hcMjlcmnmzJm65557LCsOAADASl4Fn5kzZ+rtt99Wz549lZ2drQkTJqh58+basGGDXnrppeueZ8OGDbr33nsVGRkph8OhFStWeKw3xmjSpEmqWbOmgoODFR0drYMHD3qMSU9P18CBAxUSEqLQ0FANHTpUFy9e9GazAABAGedV8GnevLkOHDigzp076/7779elS5fUr18/bd++XQ0bNrzueS5duqSWLVtq7ty5ha6fOXOmXn/9dc2fP1/JycmqUKGCYmJidOXKFfeYgQMHas+ePUpMTNSqVau0YcMGDRs2zJvNAgAAZdwNn9yck5OjHj16aP78+frjH/94U0/es2dP9ezZs9B1xhjNmTNHf/rTn3T//fdLkt5//32Fh4drxYoVGjBggPbt26c1a9YoJSVFbdu2lSS98cYb6tWrl1555RVFRkbeVH0AAKBsueHgU65cOe3atasoavFw9OhRpaWlKTo62r2scuXKioqK0qZNmzRgwABt2rRJoaGh7tAjSdHR0fLz81NycrL69u1b6NxZWVnKyspy38/MzJQk5ebmKjc315L68/Ly3P91OByWzFkW+PtZ34v8Xvs5HPK/qY/k9JT/XiiKmq16n/ka72vfode+Q699y8p+e/O71KvL2R999FG98847mjFjhjcPvy5paWmSpPDwcI/l4eHh7nVpaWkKCwvzWO90OlW1alX3mMJMnz5dU6dOLbB869atln3thsvlkiSlpKTIz8/Cv8alXIdGEZbPmZKSIklq3yhcVn54eHJysqSiqTl/7tKG97Xv0Gvfode+ZWW/L126dMOP8Sr45Obm6t1339Vnn32mNm3aFAgLs2bN8mZan5k4caLGjh3rvp+ZmanatWurbdu2CgkJseQ5cnNzlZCQoHbt2snp9KrNZVL8pymWz/nog32UkJCgLYdOKc/C5DM49gFJRVNz/tylDe9r36HXvkOvfcvKfucfsbkRN/SMR44cUb169bR79261bt1aknTgwAGPMVbtJoyIuPp/2adOnVLNmjXdy0+dOqU777zTPeb06dMej8vNzVV6err78YUJDAws9POGnE6nZW/6/O8t8/f35wfpR/Jc1n+fm7+/vyTJZYyl8+e/bkVRc2l9T/C+9h167Tv02res7Lc3j7+hRzRu3Fipqalat26dpKtfUfH6668XOBxlhfr16ysiIkJJSUnuoJOZmank5GQNHz5cktSxY0dlZGRo27ZtatOmjSRp7dq1crlcioqKsrwmAABQut1Q8Pnpt69/8sknXh1fy3fx4kUdOnTIff/o0aPasWOHqlatqjp16mj06NF64YUX1LhxY9WvX1/PPfecIiMj1adPH0lSs2bN1KNHDz355JOaP3++cnJyFBcXpwEDBnBFFwAAKOCm9jH9NAjdqK1bt3p80nP+eTeDBg3SggULNGHCBF26dEnDhg1TRkaGOnfurDVr1igoKMj9mIULFyouLk7dunWTn5+f+vfvr9dff/2m6gIAAGXTDQUfh8NR4Byemzmn59e//vU1w5PD4dDzzz+v559//mfHVK1aVYsWLfK6BgAAYB83fKhr8ODB7hODr1y5oqeffrrAVV3Lli2zrkIAAACL3FDwGTRokMf9Rx991NJiAAAAitINBZ/4+PiiqgMAAKDI8RGVAADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANgg+AADANpzFXQBKpiHPzbZ0vvhpYyydr6ywus8SvQaAa2GPDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA2CDwAAsA1ncRcAoGgMeW62pfPFTxtj6XwAUBzY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SDJffvmlx/Lx48eb9u3bF/qYyZMnG0ncuHHjxo0btzJw++677647N5T6PT7Vq1eXv7+/Tp065bH81KlTioiIKPQxEydO1NixY933XS6X0tPTVa1aNTkcDkvqyszMVO3atfXdd98pJCTEkjlROHrtO/Tad+i179Br37Ky38YYXbhwQZGRkdf9mFIffAICAtSmTRslJSWpT58+kq4GmaSkJMXFxRX6mMDAQAUGBnosCw0NLZL6QkJC+EHyEXrtO/Tad+i179Br37Kq35UrV76h8aU++EjS2LFjNWjQILVt21bt27fXnDlzdOnSJfdVXgAAAFIZCT4PP/ywzpw5o0mTJiktLU133nmn1qxZU+CEZwAAYG9lIvhIUlxc3M8e2ioOgYGBmjx5coFDarAevfYdeu079Np36LVvFXe/HcZYfK01AABACVUmvrICAADgehB8AACAbRB8AACAbRB8AACAbRB8isDcuXNVr149BQUFKSoqSlu2bCnukkq06dOnq127dqpUqZLCwsLUp08f7d+/32PMlStXNGLECFWrVk0VK1ZU//79C3xa97Fjx9S7d2+VL19eYWFhGj9+fIHvXlu/fr1at26twMBANWrUSAsWLCjqzSvRZsyYIYfDodGjR7uX0WtrnThxQo8++qiqVaum4OBgtWjRQlu3bnWvN8Zo0qRJqlmzpoKDgxUdHa2DBw96zJGenq6BAwcqJCREoaGhGjp0qC5evOgxZteuXerSpYuCgoJUu3ZtzZw50yfbV1Lk5eXpueeeU/369RUcHKyGDRtq2rRpHt/hRK+9s2HDBt17772KjIyUw+HQihUrPNb7sq9Lly5V06ZNFRQUpBYtWmj16tU3vkHefUMWfs7ixYtNQECAeffdd82ePXvMk08+aUJDQ82pU6eKu7QSKyYmxsTHx5vdu3ebHTt2mF69epk6deqYixcvusc8/fTTpnbt2iYpKcls3brVdOjQwfzqV79yr8/NzTXNmzc30dHRZvv27Wb16tWmevXqZuLEie4xR44cMeXLlzdjx441e/fuNW+88Ybx9/c3a9as8en2lhRbtmwx9erVM3fccYcZNWqUezm9tk56erqpW7euGTx4sElOTjZHjhwxCQkJ5tChQ+4xM2bMMJUrVzYrVqwwO3fuNPfdd5+pX7+++eGHH9xjevToYVq2bGk2b95svvjiC9OoUSMT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"/>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6747cdd8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Additional-SQL-queries">Additional SQL-queries<a class="anchor-link" href="#Additional-SQL-queries">¶</a></h2>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=478a9eb4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3>Filter all apartments with &gt;=4.0 rooms and area &gt;= 100m2</h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8a706800">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Write an SQL-query to filter all apartments with &gt;= 4.0 rooms and where the area is &gt;= 100m2</span>
+
+<span class="c1"># Query the SQL-table</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''SELECT *</span>
+<span class="s1">               FROM apartments_table</span>
+<span class="s1">               WHERE rooms &gt;=4</span>
+<span class="s1">               AND area &gt;=100'''</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'OrderId'</span><span class="p">,</span><span class="s1">'Address'</span><span class="p">,</span><span class="s1">'Rooms'</span><span class="p">,</span><span class="s1">'Area'</span><span class="p">,</span><span class="s1">'Price'</span><span class="p">])</span>    
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
@@ -10187,149 +8053,53 @@ dtype: object</pre>
 <thead>
 <tr style="text-align: right;">
 <th></th>
-<th>brand</th>
-<th>brand:wikidata</th>
-<th>brand:wikipedia</th>
-<th>name</th>
-<th>opening hours</th>
-<th>shop</th>
-<th>city</th>
-<th>housenumber</th>
-<th>postcode</th>
-<th>street</th>
-<th>...</th>
-<th>source:addr</th>
-<th>opening_date</th>
-<th>postid</th>
-<th>operator:website</th>
-<th>diet:local</th>
-<th>payment:account_cards</th>
-<th>diet:fish</th>
-<th>diet:mediterranean</th>
-<th>diet:organic</th>
-<th>diet:seafood</th>
+<th>OrderId</th>
+<th>Address</th>
+<th>Rooms</th>
+<th>Area</th>
+<th>Price</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <th>0</th>
-<td>Spar</td>
-<td>Q610492</td>
-<td>en:SPAR (retailer)</td>
-<td>Spar</td>
-<td>Mo-Th 08:00-19:00; Fr 08:00-20:00; Sa 08:00-17:00</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998205-26</td>
+<td>Frowiesstrasse 36, 8344 Bäretswil, ZH</td>
+<td>5.5</td>
+<td>140.0</td>
+<td>2750.0</td>
 </tr>
 <tr>
 <th>1</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>de:Migros</td>
-<td>Migros</td>
-<td>Mo-Th 08:00-19:00, Fr 08:00-20:00, Sa 07:30-17...</td>
-<td>supermarket</td>
-<td>Uznach</td>
-<td>25</td>
-<td>8730</td>
-<td>Zürcherstrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998205-27</td>
+<td>Kanzleistrasse 15, 8418 Schlatt ZH, ZH</td>
+<td>4.5</td>
+<td>104.0</td>
+<td>2700.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1693998205-29</td>
+<td>Bolletweg 14, 8934 Knonau, ZH</td>
+<td>5.5</td>
+<td>150.0</td>
+<td>3390.0</td>
 </tr>
 <tr>
 <th>3</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>de:Coop (Schweiz)</td>
-<td>Coop</td>
-<td>Mo-Sa 06:00-22:00</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>1</td>
-<td>8001</td>
-<td>Bahnhofbrücke</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998205-31</td>
+<td>Adlergass 6, 8805 Richterswil, ZH</td>
+<td>5.5</td>
+<td>165.0</td>
 <td>NaN</td>
 </tr>
 <tr>
 <th>4</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>NaN</td>
-<td>Migros</td>
-<td>Mo-Sa 08:00-21:00; PH off</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>7</td>
-<td>8004</td>
-<td>Wengistrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-</tr>
-<tr>
-<th>7</th>
-<td>Migros</td>
-<td>Q680727</td>
-<td>NaN</td>
-<td>Migros</td>
-<td>Mo-Fr 07:30-20:00; PH off; Sa 08:00-19:00</td>
-<td>supermarket</td>
-<td>Winterthur</td>
-<td>102</td>
-<td>8406</td>
-<td>Zürcherstrasse</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>1693998205-33</td>
+<td>Haldenstrasse 67, 8602 Wangen b. Dübendorf, ZH</td>
+<td>4.5</td>
+<td>118.0</td>
+<td>3390.0</td>
 </tr>
 <tr>
 <th>...</th>
@@ -10338,153 +8108,415 @@ dtype: object</pre>
 <td>...</td>
 <td>...</td>
 <td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
 </tr>
 <tr>
-<th>3378</th>
-<td>Spar</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>Spar</td>
-<td>Mo-Sa 07:00 - 22:00</td>
-<td>supermarket</td>
-<td>Zürich</td>
-<td>4</td>
-<td>8041</td>
-<td>Spinnereiplatz</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<th>234</th>
+<td>1693998381-998</td>
+<td>Tösstalstrasse 12, 8492 Wila, ZH</td>
+<td>4.5</td>
+<td>109.0</td>
+<td>1980.0</td>
 </tr>
 <tr>
-<th>3380</th>
-<td>Denner</td>
-<td>Q379911</td>
-<td>NaN</td>
-<td>Denner</td>
-<td>off; 2023 Oct 5+ unknown</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>1</td>
-<td>NaN</td>
-<td>Am Heubächli</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<th>235</th>
+<td>1693998381-999</td>
+<td>Murzlenstrasse 66, 8166 Niederweningen, ZH</td>
+<td>4.5</td>
+<td>111.0</td>
+<td>2700.0</td>
 </tr>
 <tr>
-<th>3387</th>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>Coop Bären-Zentrum</td>
-<td>Mo-Th 08:00-19:00; Fr 08:00-20:00; Sa 07:30-17:00</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<th>236</th>
+<td>1693998381-1001</td>
+<td>Murzlenstrasse 66, 8166 Niederweningen, ZH</td>
+<td>4.5</td>
+<td>111.0</td>
+<td>2800.0</td>
 </tr>
 <tr>
-<th>3388</th>
-<td>Migros</td>
-<td>Q115661152</td>
-<td>NaN</td>
-<td>Migros</td>
-<td>Mo-Fr 07:30-19:00; Th 07:30-20:00; Sa 07:30-18:30</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<th>237</th>
+<td>1693998381-1006</td>
+<td>Holzmoosrütisteig 2b, 8820 Wädenswil, ZH</td>
+<td>4.5</td>
+<td>110.0</td>
+<td>3500.0</td>
 </tr>
 <tr>
-<th>3391</th>
-<td>Coop</td>
-<td>Q432564</td>
-<td>NaN</td>
-<td>Coop</td>
-<td>Mo-Fr 7:00-19:00; Sa 08:00-17:00; PH off</td>
-<td>supermarket</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
+<th>238</th>
+<td>1693998381-1008</td>
+<td>Maneggstrasse 83, 8041 Zürich, ZH</td>
+<td>4.5</td>
+<td>114.0</td>
+<td>3262.0</td>
 </tr>
 </tbody>
 </table>
-<p>2031 rows × 233 columns</p>
+<p>239 rows × 5 columns</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=86257783">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0d8fe8c8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3>Calculate the average price per room size</h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f3fd8901">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the average price per room size</span>
+
+<span class="c1"># Query the SQL-table</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''SELECT rooms, AVG(price)</span>
+<span class="s1">               FROM apartments_table</span>
+<span class="s1">               GROUP BY rooms'''</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Rooms'</span><span class="p">,</span><span class="s1">'Price'</span><span class="p">])</span>    
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Rooms</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>NaN</td>
+<td>3250.844444</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1.0</td>
+<td>1290.311475</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1.5</td>
+<td>2036.418605</td>
+</tr>
+<tr>
+<th>3</th>
+<td>2.0</td>
+<td>2133.375000</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2.5</td>
+<td>2450.907407</td>
+</tr>
+<tr>
+<th>5</th>
+<td>3.0</td>
+<td>2112.017857</td>
+</tr>
+<tr>
+<th>6</th>
+<td>3.5</td>
+<td>2643.370968</td>
+</tr>
+<tr>
+<th>7</th>
+<td>4.0</td>
+<td>2890.257143</td>
+</tr>
+<tr>
+<th>8</th>
+<td>4.5</td>
+<td>3029.432990</td>
+</tr>
+<tr>
+<th>9</th>
+<td>5.0</td>
+<td>2993.333333</td>
+</tr>
+<tr>
+<th>10</th>
+<td>5.5</td>
+<td>3557.156250</td>
+</tr>
+<tr>
+<th>11</th>
+<td>6.0</td>
+<td>3280.000000</td>
+</tr>
+<tr>
+<th>12</th>
+<td>6.5</td>
+<td>3637.666667</td>
+</tr>
+<tr>
+<th>13</th>
+<td>7.0</td>
+<td>5400.000000</td>
+</tr>
+<tr>
+<th>14</th>
+<td>7.5</td>
+<td>4765.000000</td>
+</tr>
+<tr>
+<th>15</th>
+<td>8.0</td>
+<td>5500.000000</td>
+</tr>
+<tr>
+<th>16</th>
+<td>8.5</td>
+<td>8500.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5590a109">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3>Calculate the average area per room size</h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=22494f8c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the average area per room size</span>
+
+<span class="c1"># Query the SQL-table</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''SELECT rooms, AVG(area)</span>
+<span class="s1">               FROM apartments_table</span>
+<span class="s1">               GROUP BY rooms'''</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Rooms'</span><span class="p">,</span><span class="s1">'Area'</span><span class="p">])</span>    
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Rooms</th>
+<th>Area</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1.0</td>
+<td>32.092593</td>
+</tr>
+<tr>
+<th>2</th>
+<td>1.5</td>
+<td>35.526316</td>
+</tr>
+<tr>
+<th>3</th>
+<td>2.0</td>
+<td>54.428571</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2.5</td>
+<td>67.317881</td>
+</tr>
+<tr>
+<th>5</th>
+<td>3.0</td>
+<td>68.980392</td>
+</tr>
+<tr>
+<th>6</th>
+<td>3.5</td>
+<td>89.858974</td>
+</tr>
+<tr>
+<th>7</th>
+<td>4.0</td>
+<td>96.129032</td>
+</tr>
+<tr>
+<th>8</th>
+<td>4.5</td>
+<td>114.779661</td>
+</tr>
+<tr>
+<th>9</th>
+<td>5.0</td>
+<td>110.000000</td>
+</tr>
+<tr>
+<th>10</th>
+<td>5.5</td>
+<td>154.542373</td>
+</tr>
+<tr>
+<th>11</th>
+<td>6.0</td>
+<td>530.750000</td>
+</tr>
+<tr>
+<th>12</th>
+<td>6.5</td>
+<td>248.941176</td>
+</tr>
+<tr>
+<th>13</th>
+<td>7.0</td>
+<td>195.000000</td>
+</tr>
+<tr>
+<th>14</th>
+<td>7.5</td>
+<td>205.000000</td>
+</tr>
+<tr>
+<th>15</th>
+<td>8.0</td>
+<td>160.000000</td>
+</tr>
+<tr>
+<th>16</th>
+<td>8.5</td>
+<td>210.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7904d668">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Close-db-connection-(if-open)">Close db connection (if open)<a class="anchor-link" href="#Close-db-connection-(if-open)">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1b90d3ee">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Close db connection (if open)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">check_conn</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Status (True = open, False = closed)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">check_conn</span><span class="p">(</span><span class="n">conn</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>False
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e847eb93">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10494,7 +8526,7 @@ dtype: object</pre>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7f5bf8aa">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8e706987">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -10529,7 +8561,7 @@ dtype: object</pre>
 <pre>-----------------------------------
 POSIX
 Linux | 6.2.0-1015-azure
-Datetime: 2023-11-06 11:30:57
+Datetime: 2023-11-04 20:36:44
 Python Version: 3.10.13
 -----------------------------------
 </pre>
